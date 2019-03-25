@@ -2,8 +2,13 @@ import axios from 'axios'
 
 import app from './app'
 
-app.listen(process.env.RINGCENTRAL_CHATBOT_EXPRESS_PORT, () => {
-  console.log(`Server is running at http://localhost:${process.env.RINGCENTRAL_CHATBOT_EXPRESS_PORT}`)
+let PORT = process.env.RINGCENTRAL_CHATBOT_SERVER
+if (process.env.PORT) { 
+    PORT = process.env.PORT
+}
+
+app.listen( PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 })
 
 setInterval(() => {
