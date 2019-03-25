@@ -10,14 +10,14 @@
     },
     "dependencies": {
 	"aha-io": "file:./src/node-ahaio",
-	"aha-io-oauth": "^0.0.1",
+	"aha-io-oauth": "0.0.3",
 	"axios": "^0.18.0",
 	"html-entities": "^1.2.1",
-	"ringcentral-chatbot": "^0.4.8",
 	"pg": "^7.6.1",
+	"ringcentral-chatbot": "^0.4.8",
+	"serverless-http": "^1.8.0",
 	"sqlite3": "^4.0.6",
-	"turndown": "^5.0.3",
-	"serverless-http": "^1.8.0"
+	"turndown": "^5.0.3"
     },
     "devDependencies": {
 	"@babel/cli": "^7.2.3",
@@ -25,7 +25,7 @@
 	"@babel/preset-env": "^7.3.1",
 	"@babel/register": "^7.0.0",
 	"babel-core": "7.0.0-bridge.0",
-	"babel-jest": "^23.6.0",
+	"babel-jest": "^24.5.0",
 	"dotenv": "^6.2.0",
 	"ngrok": "^3.1.1",
 	"serverless": "^1.33.2"
