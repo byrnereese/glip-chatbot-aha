@@ -13,10 +13,6 @@ provider:
         - lambda:InvokeFunction
       Resource: "*"
 package:
-  exclude:
-    - ./**
-    - '!src/*.js'
-    - '!node_modules/**'
   excludeDevDependencies: true
 functions:
   app:
