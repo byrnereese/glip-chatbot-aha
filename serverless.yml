@@ -13,12 +13,12 @@ provider:
         - lambda:InvokeFunction
       Resource: "*"
 package:
-  excludeDevDependencies: true
+  excludeDevDependencies: false
 functions:
   app:
-    handler: lambda.app
+    handler: dist/lambda.app
     timeout: 300
   proxy:
-    handler: lambda.proxy
+    handler: dist/lambda.proxy
     events:
       - http: 'ANY {proxy+}'
