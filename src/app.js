@@ -49,44 +49,47 @@ app.post('/aha/webhook', async (req, res) => {
     let audit = req.body.audit
     console.log(`Received webhook from Aha (group: ${groupId}, bot: ${botId})...`)
     const bot = await Bot.findByPk(botId)
+    if audit.description.includes('added custom field for') {
+	audit.interesting = false
+    }
     if (bot) {
-	let changes = []
-	let seen_fields = []
-	for (var i in audit.changes) {
-	    let change = audit.changes[i]
-	    let ignore_fields = new RegExp('(Created by user|Rank|Assigned to user|Show feature remaining estimate|Reference num)')
-	    if (change.value == '' || // empty value
-		(ignore_fields.test(change.field_name) && audit.audit_action === "create") || // field to ignore
-		seen_fields.includes(change.field_name) // duplicate field
-	       ) {
-		continue
-	    }
-	    let shortDesc = "Short"
-	    switch(change.field_name) {
-	    case "Name":
-	    case "Description":
-		shortDesc = "Long"
-		break
-	    }
-	    let change_value = ''
-	    if (audit.auditable_type === "note") {
-		change_value = turnDown.turndown(change.value.toString())
-	    } else {
-		change_value = entities.decode(change.value.toString())
-	    }
-	    let change_instruction = {
-		"title": change.field_name,
-		"value": change_value,
-		"style": shortDesc
-	    }
-	    if (change.field_name === "Name") {
-		changes.splice( 0, 0, change_instruction )
-	    } else {
-		changes.push( change_instruction )
-	    }
-	    seen_fields.push( change.field_name )
-	}
 	if (audit.interesting) { 
+	    let changes = []
+	    let seen_fields = []
+	    for (var i in audit.changes) {
+		let change = audit.changes[i]
+		let ignore_fields = new RegExp('(Created by user|Rank|Assigned to user|Show feature remaining estimate|Reference num)')
+		if (change.value == '' || // empty value
+		    (ignore_fields.test(change.field_name) && audit.audit_action === "create") || // field to ignore
+		    seen_fields.includes(change.field_name) // duplicate field
+		   ) {
+		    continue
+		}
+		let shortDesc = "Short"
+		if (change.field_name == "Name" ||
+		    change.field_name == "Description" ||
+		    change.field_name.includes('Comment by')) {
+		    shortDesc = "Long"
+		}
+		let change_value = ''
+		if (audit.auditable_type === "note" || 
+		    change.field_name.includes("Comment by")) {
+		    change_value = turnDown.turndown(change.value.toString())
+		} else {
+		    change_value = entities.decode(change.value.toString())
+		}
+		let change_instruction = {
+		    "title": change.field_name,
+		    "value": change_value,
+		    "style": shortDesc
+		}
+		if (change.field_name === "Name") {
+		    changes.splice( 0, 0, change_instruction )
+		} else {
+		    changes.push( change_instruction )
+		}
+		seen_fields.push( change.field_name )
+	    }
 	    await bot.sendMessage(groupId, {
 		"text": `${req.body.audit.user.name} ${req.body.audit.description}`,
 		"attachments": [
