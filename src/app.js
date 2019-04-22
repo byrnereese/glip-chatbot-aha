@@ -27,7 +27,7 @@ app.get('/aha/oauth', async (req, res) => {
     if (service) {
 	await service.update({ data })
     } else {
-	await Service.create({ ...query, data })
+await Service.create({ ...query, data })
     }
 
     const bot = await Bot.findByPk(botId)
@@ -85,34 +85,34 @@ app.post('/aha/webhook', async (req, res) => {
 		}
 		if (change.field_name === "Name") {
 		    changes.splice( 0, 0, change_instruction )
-		} else {
+		} else if (change_value.trim().length > 0) {
+		    // ignore if the change has no description or value
 		    changes.push( change_instruction )
 		}
 		seen_fields.push( change.field_name )
 	    }
-	    await bot.sendMessage(groupId, {
-		"text": `${req.body.audit.user.name} ${req.body.audit.description}`,
-		"attachments": [
-		    {
-			"type": "Card",
-			"color": "#00FF2A",
-			//	"fallback": "Some fallback text",
-			//	"intro": "The following fields were modified in Aha:",
-			//	"author": {
-			//	    "name": "Byrne Reese"
-			//	    ,"uri": "https://example.com/author_link"
-			//	    ,"iconUri": "https://example.com/author_icon.png"
-			//	},
-			"title": `Aha ${audit.audit_action}`,
-			"text": `The following fields were modified ${audit.auditable_url}`,
-			"fields": changes,
-			"footnote": {
-			    "text": `Changes made by ${audit.user.name}`,
-			    "time": audit.created_at
+	    // do not post a message if there are no changes to post about
+	    if (changes.length > 0) {
+		if (audit.audit_action != "destroy") {
+		    let attachement = [
+			{
+			    "type": "Card",
+			    "color": "#00FF2A",
+			    "title": `Aha ${audit.audit_action}`,
+			    "text": `The following fields were modified ${audit.auditable_url}`,
+			    "fields": changes,
+			    "footnote": {
+				"text": `Changes made by ${audit.user.name}`,
+				"time": audit.created_at
+			    }
 			}
-		    }
-		]
-	    })
+		    ];
+		}
+		await bot.sendMessage(groupId, {
+		    "text": `${req.body.audit.user.name} ${req.body.audit.description}`,
+		    "attachments": attachment 
+		})
+	    }
 	}
     }
     res.send('<!doctype><html><body>OK</body></html>')
