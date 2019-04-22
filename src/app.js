@@ -49,7 +49,7 @@ app.post('/aha/webhook', async (req, res) => {
     let audit = req.body.audit
     console.log(`Received webhook from Aha (group: ${groupId}, bot: ${botId})...`)
     const bot = await Bot.findByPk(botId)
-    if audit.description.includes('added custom field for') {
+    if (audit.description.includes('added custom field for')) {
 	audit.interesting = false
     }
     if (bot) {
