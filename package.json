@@ -10,7 +10,7 @@
 	"test": "jest"
     },
     "dependencies": {
-	"aha-io": "file:./src/node-ahaio",
+	"aha-io": "byrnereese/node-ahaio#master",
 	"aha-io-oauth": "0.0.3",
 	"axios": "^0.18.0",
 	"html-entities": "^1.2.1",
